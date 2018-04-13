@@ -40,10 +40,16 @@ def process_input(in_filename, out_filename, inactive_time):
                             duration = datetime.strptime(v[3], TIME_FORMAT) - \
                                        datetime.strptime(v[1], TIME_FORMAT)
                             if duration.days < 0:
-                                duration = timedelta(days=0, seconds=t_delta.seconds, microseconds=t_delta.microseconds)
+                                duration_new = timedelta(days=0, seconds=t_delta.seconds,
+                                                         microseconds=t_delta.microseconds)
 
-                            duration_secs = duration.total_seconds() + 1
-                            if (datetime.strptime(v[2], DATE_FORMAT) - datetime.strptime(v[0], DATE_FORMAT)).days == 1:
+                                duration_secs = duration_new.total_seconds() - 1
+
+                            else:
+                                duration_secs = duration.total_seconds() + 1
+
+                            if duration.days == 0 and ((datetime.strptime(v[2], DATE_FORMAT) -
+                                                        datetime.strptime(v[0], DATE_FORMAT)).days == 1):
                                 duration_secs = duration_secs + 86400
                             with open(out_filename, mode='a+') as outfile:
                                 outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
@@ -54,11 +60,19 @@ def process_input(in_filename, out_filename, inactive_time):
                             del dict_count[k]
                         elif d_delta.days == 1 and t_delta.days < 0:
                             t_delta = timedelta(days=0, seconds=t_delta.seconds, microseconds=t_delta.microseconds)
+
                             if t_delta.total_seconds() > inactive_time:
-                                duration_secs = (datetime.strptime(v[3], TIME_FORMAT) -
-                                                 datetime.strptime(v[1], TIME_FORMAT)).total_seconds() + 1
-                                if (datetime.strptime(v[2], DATE_FORMAT) -
-                                        datetime.strptime(v[0], DATE_FORMAT)).days == 1:
+                                duration = datetime.strptime(v[3], TIME_FORMAT) - \
+                                           datetime.strptime(v[1], TIME_FORMAT)
+                                if duration.days < 0:
+                                    duration_new = timedelta(days=0, seconds=t_delta.seconds,
+                                                             microseconds=t_delta.microseconds)
+                                    duration_secs = duration_new.total_seconds() + 1
+                                else:
+                                    duration_secs = duration.total_seconds() + 1
+
+                                if duration.days == 0 and ((datetime.strptime(v[2], DATE_FORMAT) -
+                                                                datetime.strptime(v[0], DATE_FORMAT)).days == 1):
                                     duration_secs = duration_secs + 86400
 
                                 with open(out_filename, mode='a+') as outfile:
@@ -76,11 +90,14 @@ def process_input(in_filename, out_filename, inactive_time):
                             duration = datetime.strptime(v[3], TIME_FORMAT) - \
                                        datetime.strptime(v[1], TIME_FORMAT)
                             if duration.days < 0:
-                                duration = timedelta(days=0, seconds=t_delta.seconds, microseconds=t_delta.microseconds)
+                                duration_new = timedelta(days=0, seconds=t_delta.seconds,
+                                                         microseconds=t_delta.microseconds)
+                                duration_secs = duration_new.total_seconds() + 1
+                            else:
+                                duration_secs = duration.total_seconds() + 1
 
-                            duration_secs = duration.total_seconds() + 1
-                            if (datetime.strptime(v[2], DATE_FORMAT) -
-                                    datetime.strptime(v[0], DATE_FORMAT)).days == 1:
+                            if duration.days == 0 and ((datetime.strptime(v[2], DATE_FORMAT) -
+                                                            datetime.strptime(v[0], DATE_FORMAT)).days == 1):
                                 duration_secs = duration_secs + 86400
 
                             with open(out_filename, mode='a+') as outfile:
@@ -119,11 +136,14 @@ def process_input(in_filename, out_filename, inactive_time):
         duration = datetime.strptime(v[3], TIME_FORMAT) - \
                    datetime.strptime(v[1], TIME_FORMAT)
         if duration.days < 0:
-            duration = timedelta(days=0, seconds=t_delta.seconds, microseconds=t_delta.microseconds)
+            duration_new = timedelta(days=0, seconds=t_delta.seconds,
+                                     microseconds=t_delta.microseconds)
+            duration_secs = duration_new.total_seconds() + 1
+        else:
+            duration_secs = duration.total_seconds() + 1
 
-        duration_secs = duration.total_seconds() + 1
-        if (datetime.strptime(v[2], DATE_FORMAT) -
-                datetime.strptime(v[0], DATE_FORMAT)).days == 1:
+        if duration.days == 0 and ((datetime.strptime(v[2], DATE_FORMAT) -
+                                        datetime.strptime(v[0], DATE_FORMAT)).days == 1):
             duration_secs = duration_secs + 86400
 
         with open(out_filename, mode='a+') as outfile:
