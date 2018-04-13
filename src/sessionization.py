@@ -2,7 +2,7 @@
 
 import csv
 import collections
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def get_inactivity_period(filename):
@@ -19,20 +19,23 @@ def process_input(in_filename, out_filename, inactive_time):
         log = csv.reader(infile)
 
         for row in log:
-            if row[0] == 'ip':
+            if row and row[0][0].isalpha():
+                continue
+            elif not row:
                 continue
             else:
                 date_curr = row[1]
                 time_curr = row[2]
                 ip = row[0]
+                DATE_FORMAT = '%Y-%M-%D'
                 TIME_FORMAT = '%H:%M:%S'
                 for k, v in dict_log.items():
-                    if date_curr == v[2]:
-                        t_delta = datetime.strptime(time_curr, TIME_FORMAT) - \
+                    t_delta = datetime.strptime(time_curr, TIME_FORMAT) - \
                               datetime.strptime(v[3], TIME_FORMAT)
+                    if t_delta.days == 0:
                         if t_delta.total_seconds() > inactive_time:
-                            duration = (datetime.strptime(v[3], TIME_FORMAT) - \
-                              datetime.strptime(v[1], TIME_FORMAT)).total_seconds() + 1
+                            duration = (datetime.strptime(v[3], TIME_FORMAT) -
+                                        datetime.strptime(v[1], TIME_FORMAT)).total_seconds() + 1
                             with open(out_filename, mode='a+') as outfile:
                                 outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
                                               + str(int(duration)) + "," + str(dict_count[k]))
@@ -40,6 +43,26 @@ def process_input(in_filename, out_filename, inactive_time):
 
                             del dict_log[k]
                             del dict_count[k]
+
+                    if date_curr != v[2]:
+                        d_delta = datetime.strptime(date_curr, DATE_FORMAT) - \
+                                  datetime.strptime(v[2], DATE_FORMAT)
+                        if d_delta.days == 1:
+                            t_delta = timedelta
+
+                    else:
+                        # t_delta = datetime.strptime(time_curr, TIME_FORMAT) - \
+                        #           datetime.strptime(v[3], TIME_FORMAT)
+                        # if t_delta.total_seconds() > inactive_time:
+                        #     duration = (datetime.strptime(v[3], TIME_FORMAT) - \
+                        #       datetime.strptime(v[1], TIME_FORMAT)).total_seconds() + 1
+                        #     with open(out_filename, mode='a+') as outfile:
+                        #         outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
+                        #                       + str(int(duration)) + "," + str(dict_count[k]))
+                        #         outfile.write("\n")
+                        #
+                        #     del dict_log[k]
+                        #     del dict_count[k]
 
                 if ip in dict_log:
                     li_prev_entry = [ip] + dict_log.get(row[0])
@@ -71,9 +94,9 @@ def process_input(in_filename, out_filename, inactive_time):
 
 if __name__ == '__main__':
 
-    input_file = "../input/log.csv"
-    inactivity_file = "../input/inactivity_period.txt"
-    out_filename = "../output/sessionization.txt"
+    input_file = "../insight_testsuite/tests/test_2/input/log.csv"
+    inactivity_file = "../insight_testsuite/tests/test_2/input/inactivity_period.txt"
+    out_filename = "../insight_testsuite/tests/test_2/output/sessionization.txt"
 
     inactive_time = get_inactivity_period(inactivity_file)
     inactive_time = int(inactive_time)
