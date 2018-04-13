@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-import csv
 import collections
+import csv
 from datetime import datetime, timedelta
+import sys
 
 
 def get_inactivity_period(filename):
@@ -30,20 +31,6 @@ def process_input(in_filename, out_filename, inactive_time):
                 DATE_FORMAT = '%Y-%m-%d'
                 TIME_FORMAT = '%H:%M:%S'
                 for k, v in dict_log.items():
-                    # t_delta = datetime.strptime(time_curr, TIME_FORMAT) - \
-                    #           datetime.strptime(v[3], TIME_FORMAT)
-                    # if t_delta.days == 0:
-                    #     if t_delta.total_seconds() > inactive_time:
-                    #         duration = (datetime.strptime(v[3], TIME_FORMAT) -
-                    #                     datetime.strptime(v[1], TIME_FORMAT)).total_seconds() + 1
-                    #         with open(out_filename, mode='a+') as outfile:
-                    #             outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
-                    #                           + str(int(duration)) + "," + str(dict_count[k]))
-                    #             outfile.write("\n")
-                    #
-                    #         del dict_log[k]
-                    #         del dict_count[k]
-
                     if date_curr != v[2]:
                         d_delta = datetime.strptime(date_curr, DATE_FORMAT) - \
                                   datetime.strptime(v[2], DATE_FORMAT)
@@ -114,17 +101,6 @@ def process_input(in_filename, out_filename, inactive_time):
                                 dict_count[ip] += 1
                                 dict_log.update({ip: [li_prev_entry[0], li_prev_entry[1], date_curr, time_curr]})
 
-                            #     duration = (datetime.strptime(v[3], TIME_FORMAT) -
-                            #                 datetime.strptime(v[1], TIME_FORMAT)).total_seconds() + 1
-                            #     with open(out_filename, mode='a+') as outfile:
-                            #         outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
-                            #                       + str(int(duration)) + "," + str(dict_count[k]))
-                            #         outfile.write("\n")
-                            #
-                            #     del dict_log[k]
-                            #     del dict_count[k]
-                            # else:
-
                 else:
                     dict_log.update({ip: [row[1], row[2], date_curr, time_curr]})
                     dict_count[ip] = 1
@@ -148,10 +124,12 @@ def process_input(in_filename, out_filename, inactive_time):
 
 
 if __name__ == '__main__':
-
-    input_file = "../insight_testsuite/tests/test_2/input/log.csv"
-    inactivity_file = "../insight_testsuite/tests/test_2/input/inactivity_period.txt"
-    out_filename = "../insight_testsuite/tests/test_2/output/sessionization.txt"
+    input_file = sys.argv[1]
+    inactivity_file = sys.argv[2]
+    out_filename = sys.argv[3]
+    # input_file = "../insight_testsuite/tests/test_2/input/log.csv"
+    # inactivity_file = "../insight_testsuite/tests/test_2/input/inactivity_period.txt"
+    # out_filename = "../insight_testsuite/tests/test_2/output/sessionization.txt"
 
     inactive_time = get_inactivity_period(inactivity_file)
     inactive_time = int(inactive_time)
