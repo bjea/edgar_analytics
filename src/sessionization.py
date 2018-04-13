@@ -43,6 +43,8 @@ def process_input(in_filename, out_filename, inactive_time):
                                 duration = timedelta(days=0, seconds=t_delta.seconds, microseconds=t_delta.microseconds)
 
                             duration_secs = duration.total_seconds() + 1
+                            if (datetime.strptime(v[2], DATE_FORMAT) - datetime.strptime(v[0], DATE_FORMAT)).days == 1:
+                                duration_secs = duration_secs + 86400
                             with open(out_filename, mode='a+') as outfile:
                                 outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
                                               + str(int(duration_secs)) + "," + str(dict_count[k]))
@@ -54,7 +56,11 @@ def process_input(in_filename, out_filename, inactive_time):
                             t_delta = timedelta(days=0, seconds=t_delta.seconds, microseconds=t_delta.microseconds)
                             if t_delta.total_seconds() > inactive_time:
                                 duration_secs = (datetime.strptime(v[3], TIME_FORMAT) -
-                                            datetime.strptime(v[1], TIME_FORMAT)).total_seconds() + 1
+                                                 datetime.strptime(v[1], TIME_FORMAT)).total_seconds() + 1
+                                if (datetime.strptime(v[2], DATE_FORMAT) -
+                                        datetime.strptime(v[0], DATE_FORMAT)).days == 1:
+                                    duration_secs = duration_secs + 86400
+
                                 with open(out_filename, mode='a+') as outfile:
                                     outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
                                                   + str(int(duration_secs)) + "," + str(dict_count[k]))
@@ -73,6 +79,10 @@ def process_input(in_filename, out_filename, inactive_time):
                                 duration = timedelta(days=0, seconds=t_delta.seconds, microseconds=t_delta.microseconds)
 
                             duration_secs = duration.total_seconds() + 1
+                            if (datetime.strptime(v[2], DATE_FORMAT) -
+                                    datetime.strptime(v[0], DATE_FORMAT)).days == 1:
+                                duration_secs = duration_secs + 86400
+
                             with open(out_filename, mode='a+') as outfile:
                                 outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
                                               + str(int(duration_secs)) + "," + str(dict_count[k]))
@@ -112,6 +122,10 @@ def process_input(in_filename, out_filename, inactive_time):
             duration = timedelta(days=0, seconds=t_delta.seconds, microseconds=t_delta.microseconds)
 
         duration_secs = duration.total_seconds() + 1
+        if (datetime.strptime(v[2], DATE_FORMAT) -
+                datetime.strptime(v[0], DATE_FORMAT)).days == 1:
+            duration_secs = duration_secs + 86400
+
         with open(out_filename, mode='a+') as outfile:
             outfile.write(k + "," + v[0] + " " + v[1] + "," + v[2] + " " + v[3] + ","
                           + str(int(duration_secs)) + "," + str(dict_count[k]))
@@ -127,9 +141,6 @@ if __name__ == '__main__':
     input_file = sys.argv[1]
     inactivity_file = sys.argv[2]
     out_filename = sys.argv[3]
-    # input_file = "../insight_testsuite/tests/test_2/input/log.csv"
-    # inactivity_file = "../insight_testsuite/tests/test_2/input/inactivity_period.txt"
-    # out_filename = "../insight_testsuite/tests/test_2/output/sessionization.txt"
 
     inactive_time = get_inactivity_period(inactivity_file)
     inactive_time = int(inactive_time)
